@@ -3,44 +3,46 @@
 require 'set'
 
 module Twitter
+  mattr_accessor :default_options
+
+  # Default CSS class for auto-linked lists
+  DEFAULT_LIST_CLASS = "tweet-url list-slug"
+  # Default CSS class for auto-linked usernames
+  DEFAULT_USERNAME_CLASS = "tweet-url username"
+  # Default CSS class for auto-linked hashtags
+  DEFAULT_HASHTAG_CLASS = "tweet-url hashtag"
+  # Default CSS class for auto-linked cashtags
+  DEFAULT_CASHTAG_CLASS = "tweet-url cashtag"
+
+  # Default URL base for auto-linked usernames
+  DEFAULT_USERNAME_URL_BASE = "/contacts/"
+  # Default URL base for auto-linked lists
+  DEFAULT_LIST_URL_BASE = "https://twitter.com/"
+  # Default URL base for auto-linked hashtags
+  DEFAULT_HASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%23"
+  # Default URL base for auto-linked cashtags
+  DEFAULT_CASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%24"
+
+  # Default attributes for invisible span tag
+  DEFAULT_INVISIBLE_TAG_ATTRS = "style='position:absolute;left:-9999px;'"
+
+  self.default_options = {
+    :list_class     => DEFAULT_LIST_CLASS,
+    :username_class => DEFAULT_USERNAME_CLASS,
+    :hashtag_class  => DEFAULT_HASHTAG_CLASS,
+    :cashtag_class  => DEFAULT_CASHTAG_CLASS,
+
+    :username_url_base => DEFAULT_USERNAME_URL_BASE,
+    :list_url_base     => DEFAULT_LIST_URL_BASE,
+    :hashtag_url_base  => DEFAULT_HASHTAG_URL_BASE,
+    :cashtag_url_base  => DEFAULT_CASHTAG_URL_BASE,
+
+    :invisible_tag_attrs => DEFAULT_INVISIBLE_TAG_ATTRS
+  }
   # A module for including Tweet auto-linking in a class. The primary use of this is for helpers/views so they can auto-link
   # usernames, lists, hashtags and URLs.
   module Autolink extend self
-    # Default CSS class for auto-linked lists
-    DEFAULT_LIST_CLASS = "tweet-url list-slug".freeze
-    # Default CSS class for auto-linked usernames
-    DEFAULT_USERNAME_CLASS = "tweet-url username".freeze
-    # Default CSS class for auto-linked hashtags
-    DEFAULT_HASHTAG_CLASS = "tweet-url hashtag".freeze
-    # Default CSS class for auto-linked cashtags
-    DEFAULT_CASHTAG_CLASS = "tweet-url cashtag".freeze
-
-    # Default URL base for auto-linked usernames
-    DEFAULT_USERNAME_URL_BASE = "https://twitter.com/".freeze
-    # Default URL base for auto-linked lists
-    DEFAULT_LIST_URL_BASE = "https://twitter.com/".freeze
-    # Default URL base for auto-linked hashtags
-    DEFAULT_HASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%23".freeze
-    # Default URL base for auto-linked cashtags
-    DEFAULT_CASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%24".freeze
-
-    # Default attributes for invisible span tag
-    DEFAULT_INVISIBLE_TAG_ATTRS = "style='position:absolute;left:-9999px;'".freeze
-
-    DEFAULT_OPTIONS = {
-      :list_class     => DEFAULT_LIST_CLASS,
-      :username_class => DEFAULT_USERNAME_CLASS,
-      :hashtag_class  => DEFAULT_HASHTAG_CLASS,
-      :cashtag_class  => DEFAULT_CASHTAG_CLASS,
-
-      :username_url_base => DEFAULT_USERNAME_URL_BASE,
-      :list_url_base     => DEFAULT_LIST_URL_BASE,
-      :hashtag_url_base  => DEFAULT_HASHTAG_URL_BASE,
-      :cashtag_url_base  => DEFAULT_CASHTAG_URL_BASE,
-
-      :invisible_tag_attrs => DEFAULT_INVISIBLE_TAG_ATTRS
-    }.freeze
-
+    
     def auto_link_with_json(text, json, options = {})
       # concatenate entities
       entities = json.values().flatten()
@@ -59,7 +61,7 @@ module Twitter
       return text if entities.empty?
 
       # NOTE deprecate these attributes not options keys in options hash, then use html_attrs
-      options = DEFAULT_OPTIONS.merge(options)
+      options = Twitter.default_options.merge(options)
       options[:html_attrs] = extract_html_attrs_from_options!(options)
       options[:html_attrs][:rel] ||= "nofollow" unless options[:suppress_no_follow]
 
