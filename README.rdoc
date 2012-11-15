@@ -4,6 +4,24 @@ A gem that provides text processing routines for Twitter Tweets. The major
 reason for this is to unify the various auto-linking and extraction of
 usernames, lists, hashtags and URLs.
 
+== App Configuration
+
+This fork allows for configuration of default options via a Rails initializer
+
+  Twitter.default_options = {
+    :list_class     => "tweet-url list-slug",
+    :username_class => "tweet-url username",
+    :hashtag_class  => "tweet-url hashtag",
+    :cashtag_class  => "tweet-url cashtag",
+
+    :username_url_base => "https://twitter.com/",
+    :list_url_base     => "https://twitter.com/",
+    :hashtag_url_base  => "https://twitter.com/#!/search?q=%23",
+    :cashtag_url_base  => "https://twitter.com/#!/search?q=%24",
+
+    :invisible_tag_attrs => "style='position:absolute;left:-9999px;'"
+  }
+
 == Extraction Examples
 
   # Extraction
